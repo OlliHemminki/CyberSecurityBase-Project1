@@ -5,21 +5,14 @@
     </head>
 
     <body>
-		<h1>Your account</h1>
-
-        <table>
-		<tr>
-		<th style="text-align:left">Username: <td>{{user.username}} 
-		<tr>
-		<th style="text-align:left">Placeholder:  <td>SISÄLTÖ
-		</table>
+		<h1>Logged in as '{{user.username}}'</h1> 
 
         <form action='logout/' method="POST"    >
 			{% csrf_token %}
             <input type="submit" value="Logout"/>
         </form>
-        
-        <h2>Send message</h2>
+
+        <h3>Send new message</h3>
  
         <form id='send' action='send/' method="POST">
 			{% csrf_token %}
@@ -35,21 +28,21 @@
  
             <input type="submit" value="Send"/>
         </form>
+        
+        <br>
+        <br>
+
+        <form action='sentmessages/{{user.username}}' method="GET">
+			{% csrf_token %}
+            <input type="submit" value="Show sent messages"/>
+        </form>
 
         <h2>Received messages</h2>
         <ul>
 			{% for receivedMessage in receivedMessages %}
-            <li>From {{receivedMessage.sender}}: "{{receivedMessage.content}}"</li>
+                <li>From {{receivedMessage.sender}}: "{{receivedMessage.content}}"</li>
 			{% endfor %}
         </ul>
-
-        <h2>Sent messages</h2>
-        <ul>
-			{% for sentMessage in sentMessages %}
-            <li>To {{sentMessage.receiver}}: "{{sentMessage.content}}"</li>
-			{% endfor %}
-        </ul>
-
     </body>
 
 </html>

@@ -26,11 +26,14 @@ def homePageView(request):
 	receivedMessages = Message.objects.filter(receiver=user)
 	sentMessages = Message.objects.filter(sender=user)
 
-	return render(request,
-				'pages/index.html',
-				{'users':users, 'receivedMessages': receivedMessages, 'sentMessages':sentMessages}
-				)
+	return render(request, 'pages/index.html', {'users':users, 'receivedMessages': receivedMessages})
 
-#def sentMessagesView(request):
-#	return redirect('/')
- 
+@login_required
+def sentMessagesView(request, username):
+	
+	if username != request.user.username: #jos tämän poistaa, toteutuu riski nro 5
+		return redirect('/')
+
+	user = User.objects.get(username=username)
+	sentMessages = Message.objects.filter(sender=user)
+	return render(request, 'pages/sentmessages.html', {'sentMessages':sentMessages})
