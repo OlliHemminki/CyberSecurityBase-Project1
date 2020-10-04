@@ -5,7 +5,12 @@
     </head>
 
     <body>
-		<h1>Logged in as '{{user.username}}'</h1> 
+        <h1>Logged in as '{{user.username}}'</h1>
+        
+        Slogan: {{slogan}}
+
+        <br>
+        <br>
 
         <form action='logout/' method="POST"    >
 			{% csrf_token %}
@@ -29,6 +34,17 @@
             <input type="submit" value="Send"/>
         </form>
         
+        <br>
+        <br>
+
+        <form id='slogan' action='slogan/' method="POST">
+			{% csrf_token %}
+            <span>New slogan:</span><br/>
+            <input type="text" name="content"/><br/>
+ 
+            <input type="submit" value="Set new slogan"/>
+        </form>
+
         <br>
         <br>
 

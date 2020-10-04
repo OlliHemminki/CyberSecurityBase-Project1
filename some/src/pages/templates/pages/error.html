@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Social media app</title>
+    </head>
+
+    <body>
+        <h1>You have no access to admin panel!</h1>
+        
+        Only the following users can access this site:
+
+        <ul>
+			{% for admin in admins %}
+                <li>{{admin.username}}</li>
+			{% endfor %}
+        </ul>
+    </body>
+
+</html>

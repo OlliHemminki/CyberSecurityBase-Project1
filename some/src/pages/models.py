@@ -8,3 +8,7 @@ class Message(models.Model):
 	sender =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_name')
 	receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver_name')
 	content = models.TextField()
+
+class Slogan(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner')
+	content = models.TextField()
