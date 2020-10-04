@@ -21,12 +21,16 @@ def sendView(request):
 def homePageView(request):
 
 	user = User.objects.get(username=request.user)
-	users = User.objects.all()
 
-	print(type(users))
-
+	users = User.objects.filter(is_staff = False).exclude(username = user.username)
 	receivedMessages = Message.objects.filter(receiver=user)
 	sentMessages = Message.objects.filter(sender=user)
 
-	return render(request, 'pages/index.html', {'users':users, 'receivedMessages': receivedMessages, 'sentMessages':sentMessages})
+	return render(request,
+				'pages/index.html',
+				{'users':users, 'receivedMessages': receivedMessages, 'sentMessages':sentMessages}
+				)
+
+#def sentMessagesView(request):
+#	return redirect('/')
  
