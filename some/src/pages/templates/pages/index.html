@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Social media app</title>
+    </head>
+
+    <body>
+		<h1>Your account</h1>
+
+        <table>
+		<tr>
+		<th style="text-align:left">Username: <td>{{user.username}} 
+		<tr>
+		<th style="text-align:left">Placeholder:  <td>SISÄLTÖ
+		</table>
+
+        <form action='logout/' method="POST"    >
+			{% csrf_token %}
+            <input type="submit" value="Logout"/>
+        </form>
+        
+        <h2>Send message</h2>
+ 
+        <form id='send' action='send/' method="POST">
+			{% csrf_token %}
+            <span>To:</span><br/>
+            <select name="receiver">
+			{% for user in users %}
+                <option value="{{user.username}}">{{user.username}}</option>
+			{% endfor %}
+            </select><br/>
+ 
+            <span>Message:</span><br/>
+            <input type="text" name="content"/><br/>
+ 
+            <input type="submit" value="Send"/>
+        </form>
+
+        <h2>Received messages</h2>
+        <ul>
+			{% for receivedMessage in receivedMessages %}
+            <li>From {{receivedMessage.sender}}: "{{receivedMessage.content}}"</li>
+			{% endfor %}
+        </ul>
+
+        <h2>Sent messages</h2>
+        <ul>
+			{% for sentMessage in sentMessages %}
+            <li>To {{sentMessage.receiver}}: "{{sentMessage.content}}"</li>
+			{% endfor %}
+        </ul>
+
+    </body>
+
+</html>
