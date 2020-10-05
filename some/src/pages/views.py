@@ -5,18 +5,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .models import Message, Slogan
 
-# Poistamalla index.html -sivulta jostain POST-pyynnöstä {% csrf_token %}
-# sallitaan Cross-Site Scripting, eli saadaan mukaan riski nro 7
-
-# Yksi selkeä puute sovelluksessa on lokituksen ja monitoroinnin totaalinen puuttuminen.
-# Toisin sanoen mukana on riski nro 10.
+from django.db import connection, transaction
 
 @login_required
 def adminPanelView(request):
-
-	# Poistamalla koko oma adminpanel käytöstä ja siirtymällä Djangon 
-	# tarjoamaan admin-sivuun saataisiin korjattua ongelma, tai poistamalla
-	# lista admineista error-sivulta. Nykyisellään selvästi tuo riskin nro 6 mukaan.
 
 	user = User.objects.get(username=request.user)
 	admins = User.objects.filter(is_staff = True)
@@ -41,18 +33,15 @@ def sendView(request):
 @login_required
 def sloganView(request):
 
-	# Tämä voidaan muuttaa suoraksi SQL-muokkaukseksi,
-	# jolloin mahdollistuu väärin implementoitaessa injektointimahdollisuus. 
-	# Nyt tehty implementaatio varsin toimiva (menee modelin läpi).
-	# Tällä saadaan hoidettua riski nro 1
-
 	user = User.objects.get(username=request.user)
 	content = request.POST.get('content')
 
 	try:
-		slogan = Slogan.objects.get(user=user)
-		slogan.content = content
-		slogan.save()
+		userID = User.objects.get(username=request.user).id		
+		cursor = connection.cursor()
+		cursor.execute("UPDATE pages_slogan SET content='" + content + "' WHERE user_id='" + str(userID) + "'")
+		transaction.set_dirty()        
+		transaction.commit()
 	except:
 		slogan = Slogan.objects.create(user=user, content=content)
 		slogan.save()
@@ -70,7 +59,9 @@ def homePageView(request):
 	slogan = None
 
 	try:
-		slogan = Slogan.objects.get(user=user).content
+		userID = User.objects.get(username=request.user).id
+		slogan = Slogan.objects.raw('SELECT * FROM pages_slogan WHERE user_id=' + str(userID))[0]
+		slogan = slogan.content
 	except:
 		slogan = "No slogan set yet."
 
@@ -78,10 +69,12 @@ def homePageView(request):
 
 @login_required
 def sentMessagesView(request, username):
-	
-	if username != request.user.username: #jos tämän poistaa, toteutuu riski nro 5
-		return redirect('/')
-
 	user = User.objects.get(username=username)
 	sentMessages = Message.objects.filter(sender=user)
 	return render(request, 'pages/sentmessages.html', {'sentMessages':sentMessages})
+
+def receivedMessagesView(request, username):
+	
+	user = User.objects.get(username=username)
+	receivedMessages = Message.objects.filter(receiver=user)
+	return render(request, 'pages/receivedmessages.html', {'receivedMessages':receivedMessages})

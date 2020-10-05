@@ -20,7 +20,7 @@
         <h3>Send new message</h3>
  
         <form id='send' action='send/' method="POST">
-			{% csrf_token %}
+            {% csrf_token %}
             <span>To:</span><br/>
             <select name="receiver">
 			{% for user in users %}
@@ -53,12 +53,10 @@
             <input type="submit" value="Show sent messages"/>
         </form>
 
-        <h2>Received messages</h2>
-        <ul>
-			{% for receivedMessage in receivedMessages %}
-                <li>From {{receivedMessage.sender}}: "{{receivedMessage.content}}"</li>
-			{% endfor %}
-        </ul>
+        <form action='receivedmessages/{{user.username}}' method="GET">
+			{% csrf_token %}
+            <input type="submit" value="Show received messages"/>
+        </form>
     </body>
 
 </html>
